@@ -1,0 +1,36 @@
+{
+     "one email from filter" : [
+         "emailFrom",
+         "simplefrom@example.com",
+         "single",
+         1
+     ],
+     "multi email from filter" : [
+         "emailFrom",
+         [
+             "multiOne@example.com",
+             "multiTwo@example.com"
+         ],
+         "multi",
+         1
+    ],
+    "multi domain from multi email to filter" : [
+         "domainFromEmailTo",
+         [
+              [
+                   "multidomainone.com",
+                   "multidomaintwo.com"
+
+              ],
+              [
+                   "lucas@somesmtp.com",
+                   "lara@somesmtp.com"
+
+              ]
+
+         ],
+         1
+
+    ]
+
+}
