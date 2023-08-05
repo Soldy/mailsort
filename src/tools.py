@@ -1,6 +1,6 @@
 import re
 
-def emailSplitter(email:str)->dict[str, str]:
+def emailSplitter(email: str)->dict[str, str]:
     out = {
         'alias':'',
         'domain':'',
@@ -17,7 +17,7 @@ def emailSplitter(email:str)->dict[str, str]:
         out['email_correct'] = True
     return out
 
-def addressSplitter(address:str)->dict[str, str]:
+def addressSplitter(address: str)->dict[str, str]:
     out = {
         'name':[],
         'address':''
@@ -29,7 +29,7 @@ def addressSplitter(address:str)->dict[str, str]:
         out['name'].append(splitted[i])
     return out | emailSplitter(out['address'])
 
-def addressesSplitter(address:str | list[str])->list[dict[str,str]]:
+def addressesSplitter(address: str | list[str])->list[dict[str,str]]:
     if str(address) == 'None':
         return []
     out = []
@@ -42,3 +42,18 @@ def addressesSplitter(address:str | list[str])->list[dict[str,str]]:
     for address in addresses:
         out.append(addressSplitter(address))
     return out
+
+def addressCheck(sample: str, address: str)->bool:
+    splitted = addressesSplitter(address)
+    for addr in splitted:
+        if sample == addr['address'] :
+            return True
+    return False
+
+
+def domainCheck(sample: str, address: str)->bool:
+    splitted = addressesSplitter(address)
+    for addr in splitted:
+        if sample == addr['domain'] :
+            return True
+    return False
