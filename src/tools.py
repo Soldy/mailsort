@@ -66,3 +66,13 @@ def domainCheck(sample: str, address: str)->bool:
         if sample == addr['domain'] :
             return True
     return False
+
+def headerSize(lines: list[str])->int:
+    header_size = -1
+    for i in range(len(lines)):
+        line = (lines[i].rstrip().lstrip()).split(':')
+        if len(line) > 1:
+            header_size = header_size + 1
+        if 2 > len(line):
+            return header_size
+    return header_size
