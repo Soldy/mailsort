@@ -110,3 +110,12 @@ def headerSubject(sub: str)->str:
       sub +
       '\n'
     )
+
+def merger(addr: dict, subject: str, body: list[str])->list[str]:
+    return [
+      *headerAddress(addr),
+      subject,
+      '\n',
+      *body
+    ]
+
