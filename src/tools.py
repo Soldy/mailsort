@@ -1,5 +1,14 @@
 import re
 
+address_types = {
+    'from':'From',
+    'to':'To',
+    'cc':'Cc',
+    'bcc':'Bcc',
+    'replay-to':'Replay-To',
+    'in-replay-to':'In-Replay-To'
+}
+
 def emailSplitter(email: str)->dict[str, str]:
     out = {
         'alias':'',
