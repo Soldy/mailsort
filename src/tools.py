@@ -76,3 +76,9 @@ def headerSize(lines: list[str])->int:
         if 2 > len(line):
             return header_size
     return header_size
+
+def headerGet(lines: list[str])->list[str]: 
+    return lines[:headerSize(lines)]
+
+def bodyGet(lines: list[str])->list[str]: 
+    return lines[headerSize(lines)+1:]
