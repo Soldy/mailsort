@@ -82,3 +82,31 @@ def headerGet(lines: list[str])->list[str]:
 
 def bodyGet(lines: list[str])->list[str]: 
     return lines[headerSize(lines)+1:]
+
+def addressString(addr: dict)->str:
+    return (
+        ' '.join(addr['name']) +
+        '<'+
+        addr['address'] +
+        '>\n'
+    )
+
+def headerAddress(addr: dict)->list[str]:
+    types = address_types
+    keys = types.keys()
+    out = []
+    for k in keys:
+        if k in addr and addr[k]['email_correct'] == True:
+           
+            out.append(
+              types[k] + ':' +
+              addressString(addr[k])
+            )
+    return out
+
+def headerSubject(sub: str)->str:
+    return (
+      'Subject: '+
+      sub +
+      '\n'
+    )
