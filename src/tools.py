@@ -38,6 +38,13 @@ def addressSplitter(address: str)->dict[str, str]:
         out['name'].append(splitted[i])
     return out | emailSplitter(out['address'])
 
+def addressFix(addr_: str|dict)->dict[str, str]:
+    addr = {}
+    if type(addr_) is str:
+        addr = addressSplitter(addr_)
+    elif  type(addr_) is dict:
+        addr = addr_
+    return addr
 def addressesSplitter(address: str | list[str])->list[dict[str,str]]:
     if str(address) == 'None':
         return []
