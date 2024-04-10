@@ -75,6 +75,22 @@ def addressFormatCheck(addr_: str|dict[str,str|bool|list[str]])->bool:
            return False
     return True
 
+def addressesToList(addr_list_: list[str|dict])->list:
+    out = []
+    for i in addr_list_:
+        addr = addressFix(i)
+        if addressFormatCheck(addr):
+            out.append(addr)
+    return out
+
+def addressesToDict(addr_list_: list[str|dict])->dict:
+    out = {}
+    serial = 0
+    for i in addressesToList(addr_list_):
+        out[str(serial)] = i
+        serial = serial + 1
+    return out
+
 def domainCheck(sample: str, address: str)->bool:
     splitted = addressesSplitter(address)
     for addr in splitted:
