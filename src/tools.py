@@ -115,6 +115,29 @@ def headerSubjectGet(lines: list[str])->str:
            del line[0]
            return (':'.join(line)).rstrip().lstrip()
     return ''
+
+def headerAddressGet(lines: list[str])->dict[str,dict[str,str|int]]:
+    keys = address_types.keys()
+    types = address_types
+    out = {
+       'line':{}
+    }
+    print(keys)
+    finded = 0
+    for k in keys:
+        out['line'][k] = -1
+    for i in range(len(lines)):
+        line = (lines[i].rstrip().lstrip()).split(':')
+        for k in keys:
+            t = types[k]
+            if line[0][:len(t)] == t and out['line'][k] == -1:
+                out[k] = addressSplitter(line[1].rstrip().lstrip())
+                out['line'][k] = i
+                finded = finded + 1
+            if finded == len(keys):
+                 break
+    return out
+
 def headerGet(lines: list[str])->list[str]: 
     return lines[:headerSize(lines)]
 
@@ -124,7 +147,7 @@ def bodyGet(lines: list[str])->list[str]:
 def addressString(addr: dict)->str:
     return (
         ' '.join(addr['name']) +
-        '<'+
+        ' <'+
         addr['address'] +
         '>\n'
     )
@@ -156,4 +179,3 @@ def merger(addr: dict, subject: str, body: list[str])->list[str]:
       '\n',
       *body
     ]
-
