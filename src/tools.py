@@ -45,6 +45,7 @@ def addressFix(addr_: str|dict)->dict[str, str]:
     elif  type(addr_) is dict:
         addr = addr_
     return addr
+
 def addressesSplitter(address: str | list[str])->list[dict[str,str]]:
     if str(address) == 'None':
         return []
@@ -66,6 +67,13 @@ def addressCheck(sample: str, address: str)->bool:
             return True
     return False
 
+def addressFormatCheck(addr_: str|dict[str,str|bool|list[str]])->bool:
+    req_keys = ['name','address', 'alias','domain','email_correct']
+    addr = addressFix(addr_)
+    for k in req_keys:
+        if k not in addr:
+           return False
+    return True
 
 def domainCheck(sample: str, address: str)->bool:
     splitted = addressesSplitter(address)
