@@ -108,6 +108,13 @@ def headerSize(lines: list[str])->int:
             return header_size
     return header_size
 
+def headerSubjectGet(lines: list[str])->str:
+    for i in range(len(lines)):
+        line = (lines[i].rstrip().lstrip()).split(':')
+        if line[0][:7] == 'Subject':
+           del line[0]
+           return (':'.join(line)).rstrip().lstrip()
+    return ''
 def headerGet(lines: list[str])->list[str]: 
     return lines[:headerSize(lines)]
 
