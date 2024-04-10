@@ -6,4 +6,8 @@ For that needed a long-term action plan. So I started to fire mouse traps everyw
 
 This tool mainly helps for that purpose. 
 
+Built in python because has full easy-to-use email handling. Perfect for the job.
+
+However, the email creation is just too perfect. So I have no way to build a not-perfect letter. So the tool has some extra functions for that. To build perfect letters to test the filters.
+
 
