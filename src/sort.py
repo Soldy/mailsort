@@ -30,7 +30,7 @@ class Sort:
             'DomainFromDomainCc'   : self._DomainFromDomainCc,
             'DomainFromDomainToCc' : self._DomainFromDomainToCc
         }
-    def add(self, rule: str, values: list[str], target: str)->bool:
+    def add(self, rule: str, values: list[str], target: str):
         self._filters.append({
             'rule' : rule,
             'values' : values,
@@ -54,67 +54,67 @@ class Sort:
         self._mailboxes[target].flush()
         self._mailboxes[source].unlock()
         self._mailboxes[target].unlock()
-    def _EmailFrom(self, values: str, details: dict[str, str])->bool:
+    def _EmailFrom(self, values: list[str], details: dict[str, str])->bool:
         return tools.addressCheck(values[0], details['from'])
-    def _EmailTo(self, values: str, details: dict[str, str])->bool:
+    def _EmailTo(self, values: list[str], details: dict[str, str])->bool:
         return tools.addressCheck(values[0], details['to'])
-    def _EmailCc(self, values: str, details: dict[str, str])->bool:
+    def _EmailCc(self, values: list[str], details: dict[str, str])->bool:
         return tools.addressCheck(values[0], details['cc'])
-    def _EmailToCc(self, values: str, details: dict[str, str])->bool:
+    def _EmailToCc(self, values: list[str], details: dict[str, str])->bool:
         return tools.addressCheck(values[0], [details['to'], details['cc']])
-    def _DomainFrom(self, values: str, details: dict[str, str])->bool:
+    def _DomainFrom(self, values: list[str], details: dict[str, str])->bool:
         return tools.domainCheck(values[0], details['from'])
-    def _DomainTo(self, values: str, details: dict[str, str])->bool:
+    def _DomainTo(self, values: list[str], details: dict[str, str])->bool:
         return tools.domainCheck(values[0], details['to'])
-    def _DomainCc(self, values: str, details: dict[str, str])->bool:
+    def _DomainCc(self, values: list[str], details: dict[str, str])->bool:
         return tools.domainCheck(values[0], details['cc'])
-    def _DomainToCc(self, values: str, details: dict[str, str])->bool:
+    def _DomainToCc(self, values: list[str], details: dict[str, str])->bool:
         return tools.domainCheck(values[0], [details['to'], details['cc']])
-    def _EmailFromEmailTo(self, values: str, details: dict[str, str])->bool:
+    def _EmailFromEmailTo(self, values: list[str], details: dict[str, str])->bool:
         if tools.addressCheck(values[0], details['from']):
             return tools.addressCheck(values[1], details['to'])
         return False
-    def _EmailFromEmailCc(self, values: str, details: dict[str, str])->bool:
+    def _EmailFromEmailCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.addressCheck(values[0], details['from']):
             return tools.addressCheck(values[1], details['cc'])
         return False
-    def _EmailFromEmailToCc(self, values: str, details: dict[str, str])->bool:
+    def _EmailFromEmailToCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.addressCheck(values[0], details['from']):
             return tools.addressCheck(values[1], [details['to'], details['cc']])
         return False
-    def _DomainFromEmailTo(self, values: str, details: dict[str, str])->bool:
+    def _DomainFromEmailTo(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.addressCheck(values[1], details['to'])
         return False
-    def _DomainFromEmailCc(self, values: str, details: dict[str, str])->bool:
+    def _DomainFromEmailCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.addressCheck(values[1], details['cc'])
         return False
-    def _DomainFromEmailToCc(self, values: str, details: dict[str, str])->bool:
+    def _DomainFromEmailToCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.addressCheck(values[1], [details['to'], details['cc']])
         return False
-    def _EmailFromDomainTo(self, values: str, details: dict[str, str])->bool:
+    def _EmailFromDomainTo(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.addressCheck(values[1], details['to'])
         return False
-    def _EmailFromDomainCc(self, values: str, details: dict[str, str])->bool:
+    def _EmailFromDomainCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.addressCheck(values[1], details['cc'])
         return False
-    def _EmailFromDomainToCc(self, values: str, details: dict[str, str])->bool:
+    def _EmailFromDomainToCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.addressCheck(values[1], [details['to'], details['cc']])
         return False
-    def _DomainFromDomainTo(self, values: str, details: dict[str, str])->bool:
+    def _DomainFromDomainTo(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.domainCheck(values[1], details['to'])
         return False
-    def _DomainFromDomainCc(self, values: str, details: dict[str, str])->bool:
+    def _DomainFromDomainCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.domainCheck(values[1], details['cc'])
         return False
-    def _DomainFromDomainToCc(self, values: str, details: dict[str, str])->bool:
+    def _DomainFromDomainToCc(self, values: list[str], details: dict[str, str])->bool:
         if tools.domainCheck(values[0], details['from']):
             return tools.domainCheck(values[1],[details['to'], details['cc']])
         return False
