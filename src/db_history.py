@@ -1,128 +1,93 @@
 import sqlite3
-import mailsort.db_tools
+import mailsort.db_tools as tools
+import mailsort.db_conf as conf
 
 
 def lookFilter(hash_: str):
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
-   )
-   cur = con.cursor()
-   cur.execute(
+   return tools.fetchByString(
+     hash_,
      """
        SELECT * FROM 
-         filters 
+         {0} 
        WHERE 
          hash = ?
      """, 
-     (hash_,)
+     [
+       conf.table_filter
+     ],
+     conf.file_history
    )
-   data = cur.fetchall()
-   con.close()
-   return data
 
 def getFilter(id_:int):
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
+   return tools.getId(
+     id_,
+     conf.table_filter,
+     conf.file_history
    )
-   cur = con.cursor()
-   cur.execute(
-     """
-       SELECT * FROM 
-         filters 
-       WHERE 
-         id = ?
-     """, 
-     (id_,)
-   )
-   data = cur.fetchall()
-   con.close()
-   return data[0]
 
 
 def addFilter(hash_: str):
    data = lookFilter(hash_)
    if len(data) > 0:
       return data[0][0]
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
-   )
-   cur = con.cursor()
-   cur.execute(
+   tools.execute(
+     (hash_,),
      """
-       INSERT INTO filters(hash) 
+       INSERT INTO {0}(hash) 
          VALUES(?)
      """, 
-     (hash_,)
+     [
+       conf.table_filter,
+     ],
+     conf.file_history
    )
-   con.commit()
-   con.close()
    data = lookFilter(hash_)
-   if len(data) > 0:
-      return data[0][0]
+   return data[0][0]
 
 def lookMail(uid_: str):
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
-   )
-   cur = con.cursor()
-   cur.execute(
+   return tools.fetchByString(
+     uid_,
      """
        SELECT * FROM 
-         mails 
-       WHERE uid = ?
-     """,
-     (uid_,)
+         {0} 
+       WHERE 
+         uid = ?
+     """, 
+     [
+       conf.table_mail
+     ],
+     conf.file_history
    )
-   data = cur.fetchall()
-   con.close()
-   return data
 
 def getMail(id_:int):
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
+   return tools.getById(
+     id_,
+     conf.table_mail,
+     conf.file_history
    )
-   cur = con.cursor()
-   cur.execute(
-     """
-       SELECT * FROM 
-         mails 
-       WHERE 
-         id = ?
-     """, 
-     (id_,)
-   )
-   data = cur.fetchall()
-   con.close()
-   return data[0]
 
 def addMail(uid_: str)->int:
    data = lookMail(uid_)
    if len(data) > 0:
       return data[0][0]
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
-   )
-   cur = con.cursor()
-   cur.execute(
+   tools.execute(
+     (uid_,),
      """
-       INSERT INTO mails 
+       INSERT INTO {0} 
          (uid)
        VALUES (?);
-     """,
-     (uid_,)
+     """, 
+     [
+       conf.table_mail,
+     ],
+     conf.file_history
    )
-   con.commit()
-   con.close()
    data = lookMail(uid_)
-   if len(data) > 0:
-      return data[0][0]
+   return data[0][0]
 
 def checkMailToFilter(mail_: str, filter_: str)->bool:
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
-   )
-   cur = con.cursor()
-   cur.execute(
+   data = tools.fetchAll(
+     (mail_,filter_),
      """
        SELECT * FROM 
          mail_to_filter 
@@ -131,52 +96,53 @@ def checkMailToFilter(mail_: str, filter_: str)->bool:
        AND
          filter = ?
      """, 
-     (mail_,filter_)
+     [
+       conf.table_mail_to_filter
+     ],
+     conf.file_history
    )
-   data = cur.fetchall()
-   con.close()
    if len(data) > 0:
        return True
    return False
 
 
-
-def addMailToFilter(mail_: str, filter_: str):
+def addMailToFilter(mail_: int, filter_: int):
    if checkMailToFilter(mail_, filter_):
        return
-
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
-   )
-   cur = con.cursor()
-   cur.execute(
+   tools.execute(
+     (mail_,filter_),
      """
-       INSERT INTO mail_to_filter(mail, filter) 
-         VALUES(?,?)
+       INSERT INTO mail_to_filter
+         (mail, filter) 
+       VALUES
+         (?,?)
      """, 
-     (mail_,filter_)
+     [
+       conf.table_mail_to_filter,
+     ],
+     conf.file_history
    )
-   con.commit()
-   con.close()
 
 def listByFilter(hash_:str):
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
-   )
-   cur = con.cursor()
-   cur.execute(
+   return tools.fetchByString(
+     hash_,
      """
-       SELECT uid FROM 
-         mails 
-       LEFT JOIN mail_to_filter
-       ON mails.id = mail_to_filter.mail
-       LEFT JOIN filters
-       ON filters.id = mail_to_filter.filter
+       SELECT 
+         {0}.id,
+         uid 
+       FROM 
+         {0} 
+       LEFT JOIN {1}
+       ON {0}.id = {1}.mail
+       LEFT JOIN {2}
+       ON {2}.id = {1}.filter
        WHERE 
-         filters.hash = ?
+         {2}.hash = ?
      """, 
-     (hash_,)
+     [
+       conf.table_mail,
+       conf.table_mail_to_filter,
+       conf.table_filter
+     ],
+     conf.file_history
    )
-   data = cur.fetchall()
-   con.close()
-   return data[0]
