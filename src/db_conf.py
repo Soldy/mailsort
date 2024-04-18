@@ -1,3 +1,16 @@
 
-_file_address = "address.db"
-_file_history = "history.db"
+file_address = 'address.db'
+table_domain_top = 'domain_top'
+table_domain_second = 'domain_second'
+table_domain_sub = 'domain_sub'
+table_domain = 'domain'
+table_alias = 'alias'
+table_email_address = 'email_address'
+table_name = 'name'
+table_address = 'address'
+table_name_part = 'name_part'
+table_name_full = 'name_full'
+file_history = 'history.db'
+table_filter = 'filters'
+table_mail = 'mails'
+table_mail_to_filter = 'mail_to_filter' 

@@ -1,129 +1,151 @@
 import sqlite3
-import mailsort.db_tools
-import mailsort.db_conf
-
-
+import mailsort.db_tools as tools
+import mailsort.db_conf as conf
 
 
 def create():
-   tables = mailsort.db_tools.tables(
-     mailsort.db_conf._file_address
+   creator = tools.Creator(conf.file_address)
+   creator.createNamed(
+     conf.table_domain_top
    )
-   con = sqlite3.connect(
-     mailsort.db_conf._file_address
+   creator.createNamed(
+     conf.table_domain_second
    )
-   cur = con.cursor()
-   if 'domain_top' not in tables:
-       cur.execute("""
-         CREATE TABLE domain_top( 
-           id INTEGER PRIMARY KEY,
-           name TEXT NOT NULL UNIQUE
-         )
-       """)
-   if 'domain_second' not in tables:
-       cur.execute("""
-         CREATE TABLE domain_second( 
-           id INTEGER PRIMARY KEY,
-           name TEXT NOT NULL UNIQUE
-         )
-       """)
-   if 'domain_sub' not in tables:
-       cur.execute("""
-         CREATE TABLE domain_sub( 
-           id INTEGER PRIMARY KEY,
-           name TEXT NOT NULL UNIQUE
-         )
-       """)
-   if 'domain' not in tables:
-       cur.execute("""
-         CREATE TABLE domain( 
+   creator.createNamed(
+     conf.table_domain_sub
+   )
+   creator.create(
+     """
+         CREATE TABLE {0}( 
            id INTEGER PRIMARY KEY,
            top INTEGER, 
            second INTEGER, 
            sub INTEGER,
            FOREIGN KEY (top)
-             REFERENCES domain_top(id),
+             REFERENCES {1}(id),
            FOREIGN KEY (second)
-             REFERENCES domain_second(id),
+             REFERENCES {2}(id),
            FOREIGN KEY (sub)
-             REFERENCES domain_sub(id)
+             REFERENCES {3}(id)
          )
-       """)
-   if 'alias' not in tables:
-       cur.execute("""
-         CREATE TABLE alias( 
-           id INTEGER PRIMARY KEY,
-           name TEXT NOT NULL UNIQUE
-         )
-       """)
-   if 'email_address' not in tables:
-       cur.execute("""
-         CREATE TABLE email_address( 
-           id INTEGER PRIMARY KEY,
-           domain INTEGER, 
-           alias INTEGER, 
-           FOREIGN KEY (domain)
-             REFERENCES domain(id),
-           FOREIGN KEY (alias)
-             REFERENCES alias(id)
-         )
-       """)
-   if 'name_part' not in tables:
-       cur.execute("""
-         CREATE TABLE name_part( 
-           id INTEGER PRIMARY KEY,
-           name TEXT NOT NULL UNIQUE
-         )
-       """)
-   if 'name' not in tables:
-       cur.execute("""
-         CREATE TABLE name( 
+     """,
+     [
+       conf.table_domain,
+       conf.table_domain_top,
+       conf.table_domain_second,
+       conf.table_domain_sub
+     ]
+   )
+   creator.createNamed(
+     conf.table_alias
+   )
+   creator.create(
+     """
+       CREATE TABLE {0}( 
+         id INTEGER PRIMARY KEY,
+         domain INTEGER, 
+         alias INTEGER, 
+         FOREIGN KEY (domain)
+           REFERENCES {1}(id),
+         FOREIGN KEY (alias)
+           REFERENCES {2}(id)
+       )
+     """,
+     [
+       conf.table_email_address,
+       conf.table_domain,
+       conf.table_alias
+     ]
+   )
+   creator.createNamed(
+     conf.table_name_part
+   )
+   creator.create(
+     """
+         CREATE TABLE {0}( 
            id INTEGER PRIMARY KEY
          )
-       """)
-   if 'name_full' not in tables:
-       cur.execute("""
-         CREATE TABLE name_full( 
+     """,
+     [conf.table_name]
+
+   )
+   creator.create(
+     """
+       CREATE TABLE name_full( 
+         name INTEGER, 
+         part INTEGER, 
+         FOREIGN KEY (name)
+           REFERENCES  name(id),
+         FOREIGN KEY (part)
+           REFERENCES name_part(id)
+       )
+     """,
+     [
+       conf.table_name,
+       conf.table_name_full,
+       conf.table_name_part
+     ]
+   )
+   creator.create(
+     """
+         CREATE TABLE {0}( 
            name INTEGER, 
-           part INTEGER, 
+           email INTEGER, 
            FOREIGN KEY (name)
-             REFERENCES  name(id),
-           FOREIGN KEY (part)
-             REFERENCES name_part(id)
+             REFERENCES  {1}(id),
+           FOREIGN KEY (email)
+             REFERENCES {2}(id)
          )
-       """)
-   con.close()
-   tables = mailsort.db_tools.tables(
-     mailsort.db_conf._file_history
+       """,
+     [
+       conf.table_address,
+       conf.table_name,
+       conf.table_email_address
+
+     ]
    )
-   con = sqlite3.connect(
-     mailsort.db_conf._file_history
+   creator.close()
+
+
+   creator = tools.Creator(conf.file_history)
+   creator.create(
+     """
+       CREATE TABLE {0}( 
+         id INTEGER PRIMARY KEY,
+         hash TEXT NOT NULL UNIQUE
+       )
+     """,
+     [
+       conf.table_filter
+     ]
    )
-   cur = con.cursor()
-   if 'filters' not in tables:
-       cur.execute("""
-         CREATE TABLE filters( 
-           id INTEGER PRIMARY KEY,
-           hash TEXT NOT NULL UNIQUE
-         )
-       """)
-   if 'mails' not in tables:
-       cur.execute("""
-         CREATE TABLE mails( 
-           id INTEGER PRIMARY KEY,
-           uid TEXT NOT NULL UNIQUE
-         )
-       """)
-   if 'mail_to_filter' not in tables:
-       cur.execute("""
-         CREATE TABLE mail_to_filter( 
-           mail INTEGER, 
-           filter INTEGER, 
-           FOREIGN KEY (mail)
-             REFERENCES  mails(id),
-           FOREIGN KEY (filter)
-             REFERENCES filters(id)
-         )
-       """)
-   con.close()
+   creator.create(
+     """
+       CREATE TABLE {0}( 
+         id INTEGER PRIMARY KEY,
+         uid TEXT NOT NULL UNIQUE
+       )
+     """,
+     [
+       conf.table_mail
+     ]
+   )
+   creator.create(
+     """
+       CREATE TABLE {0}( 
+         mail INTEGER, 
+         filter INTEGER, 
+         FOREIGN KEY (mail)
+           REFERENCES  {1}(id),
+         FOREIGN KEY (filter)
+           REFERENCES {2}(id)
+       )
+     """,
+     [
+       conf.table_mail_to_filter,
+       conf.table_mail,
+       conf.table_filter
+     ]
+   )
+   creator.close()
 
