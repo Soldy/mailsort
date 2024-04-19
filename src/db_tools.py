@@ -50,7 +50,6 @@ def execute(
   sql_:str,
   table_:list[str],
   file_:str
-
 ):
   con = sqlite3.connect(
     file_
@@ -108,17 +107,12 @@ def fetchByString(
   table_:list[str],
   file_:str
 ):
-  con = sqlite3.connect(
+  return fetchAll(
+    (string_,),
+    sql_,
+    table_,
     file_
   )
-  cur = con.cursor()
-  cur.execute(
-    sql_.format(*table_),
-    (string_,)
-  )
-  data = cur.fetchall()
-  con.close()
-  return data
 
 def fetchById(
   id_:int,
@@ -126,17 +120,12 @@ def fetchById(
   table_:list[str],
   file_:str
 ):
-  con = sqlite3.connect(
+  return fetchAll(
+    (id_,),
+    sql_,
+    table_,
     file_
   )
-  cur = con.cursor()
-  cur.execute(
-    sql_.format(*table_),
-    (id_,)
-  )
-  data = cur.fetchall()
-  con.close()
-  return data
 
 
 def getById(
@@ -155,4 +144,173 @@ def getById(
      [table],
      file_
    )
+
+def lookByName(
+  name_:str,
+  table_:str,
+  file_:str
+):
+  return fetchByString(
+    name_,
+    """
+      SELECT * FROM 
+        {0} 
+      WHERE 
+        name = ?
+    """, 
+    [
+      table_
+    ],
+    file_
+  )
+
+def addWithName(
+  name_:str,
+  table_:str,
+  file_:str
+)->int:
+  return lastWord(
+    (name_,),
+    """
+      INSERT INTO {0}
+        (name)
+      VALUES (?);
+    """,
+    [
+      table_
+    ],
+    file_
+  )
+
+class Transitor:
+  def __init__(self, file_name_:str):
+    self._file_name =  file_name_
+  def execute(
+    self,
+    values_:tuple,
+    sql_:str,
+    table_:list[str]
+  ):
+    con = sqlite3.connect(
+      self._file_name
+    )
+    cur = con.cursor()
+    cur.execute(
+      sql_.format(*table_),
+      values_
+    )
+    con.commit()
+    con.close()
+
+  def lastWord(
+    self,
+    values_:tuple,
+    sql_:str,
+    table_:list[str]
+  )->int:
+    con = sqlite3.connect(
+      self._file_name
+    )
+    cur = con.cursor()
+    cur.execute(
+      sql_.format(*table_),
+      values_
+    )
+    out = cur.lastrowid
+    con.commit()
+    con.close()
+    return out
+
+  def fetchAll(
+    self,
+    values_:tuple,
+    sql_:str,
+    table_:list[str]
+  ):
+    con = sqlite3.connect(
+      self._file_name
+    )
+    cur = con.cursor()
+    cur.execute(
+      sql_.format(*table_),
+      values_
+    )
+    data = cur.fetchall()
+    con.close()
+    return data
+
+  def fetchByString(
+    self,
+    string_:str,
+    sql_:str,
+    table_:list[str]
+  ):
+    return self.fetchAll(
+      (string_,),
+      sql_,
+      table_,
+    )
+
+  def fetchById(
+    self,
+    id_:int,
+    sql_:str,
+    table_:list[str]
+  ):
+    return self.fetchAll(
+      (id_,),
+      sql_,
+      table_
+    )
+
+  def getById(
+    self,
+    id_:int,
+    table_:str
+  ):
+    return self.fetchById(
+      id_,
+      """
+        SELECT * FROM 
+          {0} 
+        WHERE 
+         id = ?
+      """, 
+      [table]
+    )
+
+  def lookByName(
+    self,
+    name_:str,
+    table_:str
+  ):
+    return self.fetchByString(
+      name_,
+      """
+        SELECT * FROM 
+          {0} 
+        WHERE 
+          name = ?
+      """, 
+      [
+        table_
+      ]
+    )
+
+  def addWithName(
+    self,
+    name_:str,
+    table_:str
+  )->int:
+    return self.lastWord(
+      (name_,),
+      """
+        INSERT INTO {0}
+          (name)
+        VALUES (?);
+      """,
+      [
+        table_
+      ]
+    )
 
