@@ -3,8 +3,10 @@ import mailsort.db_tools as tools
 import mailsort.db_conf as conf
 
 
+tr = tools.Transitor(conf.file_history)
+
 def lookFilter(hash_: str):
-   return tools.fetchByString(
+   return tr.fetchByString(
      hash_,
      """
        SELECT * FROM 
@@ -14,15 +16,13 @@ def lookFilter(hash_: str):
      """, 
      [
        conf.table_filter
-     ],
-     conf.file_history
+     ]
    )
 
 def getFilter(id_:int):
-   return tools.getId(
+   return tr.getById(
      id_,
-     conf.table_filter,
-     conf.file_history
+     conf.table_filter
    )
 
 
@@ -30,7 +30,7 @@ def addFilter(hash_: str):
    data = lookFilter(hash_)
    if len(data) > 0:
       return data[0][0]
-   tools.execute(
+   tr.execute(
      (hash_,),
      """
        INSERT INTO {0}(hash) 
@@ -38,14 +38,13 @@ def addFilter(hash_: str):
      """, 
      [
        conf.table_filter,
-     ],
-     conf.file_history
+     ]
    )
    data = lookFilter(hash_)
    return data[0][0]
 
 def lookMail(uid_: str):
-   return tools.fetchByString(
+   return tr.fetchByString(
      uid_,
      """
        SELECT * FROM 
@@ -55,22 +54,20 @@ def lookMail(uid_: str):
      """, 
      [
        conf.table_mail
-     ],
-     conf.file_history
+     ]
    )
 
 def getMail(id_:int):
-   return tools.getById(
+   return tr.getById(
      id_,
-     conf.table_mail,
-     conf.file_history
+     conf.table_mail
    )
 
 def addMail(uid_: str)->int:
    data = lookMail(uid_)
    if len(data) > 0:
       return data[0][0]
-   tools.execute(
+   tr.execute(
      (uid_,),
      """
        INSERT INTO {0} 
@@ -79,14 +76,13 @@ def addMail(uid_: str)->int:
      """, 
      [
        conf.table_mail,
-     ],
-     conf.file_history
+     ]
    )
    data = lookMail(uid_)
    return data[0][0]
 
 def checkMailToFilter(mail_: str, filter_: str)->bool:
-   data = tools.fetchAll(
+   data = tr.fetchAll(
      (mail_,filter_),
      """
        SELECT * FROM 
@@ -98,8 +94,7 @@ def checkMailToFilter(mail_: str, filter_: str)->bool:
      """, 
      [
        conf.table_mail_to_filter
-     ],
-     conf.file_history
+     ]
    )
    if len(data) > 0:
        return True
@@ -109,7 +104,7 @@ def checkMailToFilter(mail_: str, filter_: str)->bool:
 def addMailToFilter(mail_: int, filter_: int):
    if checkMailToFilter(mail_, filter_):
        return
-   tools.execute(
+   tr.execute(
      (mail_,filter_),
      """
        INSERT INTO mail_to_filter
@@ -119,12 +114,11 @@ def addMailToFilter(mail_: int, filter_: int):
      """, 
      [
        conf.table_mail_to_filter,
-     ],
-     conf.file_history
+     ]
    )
 
 def listByFilter(hash_:str):
-   return tools.fetchByString(
+   return tr.fetchByString(
      hash_,
      """
        SELECT 
@@ -143,6 +137,5 @@ def listByFilter(hash_:str):
        conf.table_mail,
        conf.table_mail_to_filter,
        conf.table_filter
-     ],
-     conf.file_history
+     ]
    )
