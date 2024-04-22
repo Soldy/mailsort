@@ -98,8 +98,22 @@ def test_addDomain():
     for b in range(len(_seconds)):
       for c in range(len(_subs)):
         assert(
-          mailsort.db_address.addDomain(a, b, c)
+          mailsort.db_address.addDomain(a+1, b+1, c+1)
         ) == (a*len(_seconds)*len(_subs))+(b*len(_subs))+(c+1)
+
+def test_getDomain():
+  global _tops
+  global _seconds
+  global _subs
+  for a in range(len(_tops)):
+    for b in range(len(_seconds)):
+      for c in range(len(_subs)):
+        serial = (a*len(_seconds)*len(_subs))+(b*len(_subs))+(c+1)
+        domain = mailsort.db_address.getDomain(serial)
+       # a+1, b+1, c+1)
+        assert(
+          domain[0]
+        ) == (serial, _subs[c], _seconds[b], _tops[a])
 
 def test_addAlias():
   global _aliases
@@ -107,6 +121,36 @@ def test_addAlias():
     assert(
       mailsort.db_address.addAlias(_aliases[i])
     ) == i+1
+
+def test_addEmail():
+  global _aliases
+  global _tops
+  global _seconds
+  global _subs
+  end = ((len(_tops)-1)*len(_seconds)*len(_subs))+((len(_seconds)-1)*len(_subs))+(len(_subs))
+  for a in range(len(_tops)):
+    for b in range(len(_seconds)):
+      for c in range(len(_subs)):
+        for d in range(len(_aliases)):
+          domain = (a*len(_seconds)*len(_subs))+(b*len(_subs))+(c+1)
+          serial = (a*len(_seconds)*len(_subs)*len(_aliases))+(b*len(_subs)*len(_aliases))+(c*len(_aliases))+(d+1)
+          assert(
+            mailsort.db_address.addEmail(d+1,domain)
+          ) == serial
+
+def test_getEmail():
+  global _aliases
+  global _tops
+  global _seconds
+  global _subs
+  for a in range(len(_tops)):
+    for b in range(len(_seconds)):
+      for c in range(len(_subs)):
+        for d in range(len(_aliases)):
+          serial = (a*len(_seconds)*len(_subs)*len(_aliases))+(b*len(_subs)*len(_aliases))+(c*len(_aliases))+(d+1)
+          assert(
+            mailsort.db_address.getEmail(serial)[0]
+          ) == (serial, _aliases[d], _subs[c], _seconds[b], _tops[a])
 
 def test_addNamePart_one():
   global _namepart_one
