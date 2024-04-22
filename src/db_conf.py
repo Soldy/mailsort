@@ -1,4 +1,11 @@
-
+file_cache = 'cache.db'
+table_cache_names = 'names'
+table_cache_domains = 'domains'
+table_cache_subjects = 'subjects'
+file_header = 'headers.db'
+table_header_types = 'types'
+file_word = 'words.db'
+table_word_words = 'words'
 file_address = 'address.db'
 table_domain_top = 'domain_top'
 table_domain_second = 'domain_second'
