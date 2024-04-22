@@ -23,5 +23,8 @@ jobs:
         python-version: "3.10"
     - name: update
       run: sudo apt update -y
+    - name: Install dependencies
+      run: sudo apt install -y python3-pytest python3-pip
+    - run: ln -s src mailsort
     - name: Test with pytest
-      run: pytest test.py
+      run: pytest-3 test.py
