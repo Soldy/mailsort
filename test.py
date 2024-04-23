@@ -176,3 +176,31 @@ def test_addName():
       mailsort.db_address.addNameFull(_id,a,1)
       mailsort.db_address.addNameFull(_id,b,2)
   
+def test_addAddress():
+  global _aliases
+  global _tops
+  global _seconds
+  global _subs
+  global _namepart_one
+  global _namepart_two
+  for a in range(len(_tops)):
+    for b in range(len(_seconds)):
+      for c in range(len(_subs)):
+        for d in range(len(_aliases)):
+          for e in range(len(_namepart_one)):
+            for f in range(len(_namepart_two)):
+              name = (e*len(_namepart_two))+(f+1)
+              email = (a*len(_seconds)*len(_subs)*len(_aliases))+(b*len(_subs)*len(_aliases))+(c*len(_aliases))+(d+1)
+              serial = (
+                (a*len(_seconds)*len(_subs)*len(_aliases)*len(_namepart_one)*len(_namepart_two))+
+                (b*len(_subs)*len(_aliases)*len(_namepart_one)*len(_namepart_two))+
+                (c*len(_aliases)*len(_namepart_one)*len(_namepart_two))+
+                (d*len(_namepart_one)*len(_namepart_two))+
+                (e*len(_namepart_two))+
+                (f+1)
+              )
+              assert(
+                mailsort.db_address.addAddress(name,email)
+              ) == serial
+
+
